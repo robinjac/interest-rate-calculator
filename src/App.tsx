@@ -47,7 +47,7 @@ function App() {
     <div>
       <h1>Rate Gap Calculator</h1>
       <div>
-        <h2>Rate expense</h2>
+        <div className="flex space-x-4"><h2>Rate expense</h2><button >add +</button></div>
         <NumberInput />
 
         <h2>Rate income</h2>
