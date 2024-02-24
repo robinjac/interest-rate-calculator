@@ -67,7 +67,6 @@ const Header = ({
 );
 
 const ListItem = ({
-  key,
   value,
   onRemove,
   onChange,
@@ -77,7 +76,7 @@ const ListItem = ({
   onRemove: () => void;
   onChange: (input: Input, value: number) => void;
 }) => (
-  <div key={key} className="flex py-4 px-1 justify-between">
+  <div className="flex py-4 px-1 justify-between">
     <div className="space-x-2">
       <NumberInput
         onChange={(value) => onChange("amount", value)}
