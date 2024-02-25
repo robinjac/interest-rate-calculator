@@ -17,11 +17,9 @@ type Category = keyof State;
 type Input = keyof RateInput;
 
 function NumberInput({
-  value,
   onChange,
   unit,
 }: {
-  value?: number;
   onChange: (value: number) => void;
   unit: string;
 }) {
@@ -42,9 +40,9 @@ function NumberInput({
   };
 
   return (
-    <div className="inline-flex border-solid border-2 border-slate-600 rounded">
+    <div className="inline-flex border-solid border border-slate-600 rounded">
       <input
-        className="flex border-none outline-none pl-1"
+        className="flex border-none rounded outline-none pl-1"
         type="text"
         value={input}
         onChange={handleChange}
@@ -61,7 +59,7 @@ const Header = ({
   text: string;
   action: { label: string; onClick: () => void };
 }) => (
-  <div className="flex border-b-2 py-2 px-1 border-slate-600 justify-between">
+  <div className="flex border-b py-2 px-1 border-slate-600 justify-between">
     <h2 className="text-xl">{text}</h2>
     <button
       onClick={action.onClick}
@@ -73,27 +71,16 @@ const Header = ({
 );
 
 const ListItem = ({
-  value,
   onRemove,
   onChange,
 }: {
-  key: number;
-  value: RateInput;
   onRemove: () => void;
   onChange: (input: Input, value: number) => void;
 }) => (
-  <div className="flex py-4 px-1 justify-between">
+  <div className="flex pb-5 px-1 justify-between">
     <div className="space-x-2">
-      <NumberInput
-        onChange={(value) => onChange("amount", value)}
-        value={value.amount}
-        unit="kr"
-      />
-      <NumberInput
-        onChange={(value) => onChange("rate", value)}
-        value={value.rate}
-        unit="%"
-      />
+      <NumberInput onChange={(value) => onChange("amount", value)} unit="kr" />
+      <NumberInput onChange={(value) => onChange("rate", value)} unit="%" />
     </div>
     <button
       onClick={onRemove}
@@ -152,26 +139,15 @@ function App() {
           text="Rate expense"
           action={{ label: "Add +", onClick: () => add("expense") }}
         />
-        {state.expense.fields.map(({ rateInput, id }, index) => (
-          <ListItem
-            key={index}
-            value={rateInput}
-            onRemove={() => remove("expense", id)}
-            onChange={(input, value) => update("expense", id, input, value)}
-          />
-        ))}
-        <Header
-          text="Rate income"
-          action={{ label: "Add +", onClick: () => add("income") }}
-        />
-        {state.income.fields.map(({ rateInput, id }, index) => (
-          <ListItem
-            key={index}
-            value={rateInput}
-            onRemove={() => remove("income", id)}
-            onChange={(input, value) => update("income", id, input, value)}
-          />
-        ))}
+        <div className="pt-10">
+          {state.expense.fields.map(({ id }) => (
+            <ListItem
+              key={id}
+              onRemove={() => remove("expense", id)}
+              onChange={(input, value) => update("expense", id, input, value)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
