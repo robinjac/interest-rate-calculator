@@ -25,13 +25,19 @@ function NumberInput({
   onChange: (value: number) => void;
   unit: string;
 }) {
+  const [input, setInput] = useState<string>("");
+
   // Function to handle input change
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const value = Number(event.target.value);
+    const value = event.target.value;
+    const number = parseFloat(value);
 
     // Validate if the input is a number
-    if (!isNaN(value)) {
-      onChange(value);
+    if (!isNaN(number)) {
+      setInput(value);
+      onChange(number);
+    } else {
+      setInput("");
     }
   };
 
@@ -40,7 +46,7 @@ function NumberInput({
       <input
         className="flex border-none outline-none pl-1"
         type="text"
-        value={value}
+        value={input}
         onChange={handleChange}
       />
       <span className="px-2 bg-slate-600 text-white">{unit}</span>
