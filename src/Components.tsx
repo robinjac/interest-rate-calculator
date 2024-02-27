@@ -4,13 +4,15 @@ export type RateInput = { amount: number; rate: number };
 export type Input = keyof RateInput;
 
 export const NumberInput = ({
+  value,
   onChange,
   unit,
 }: {
+  value: number;
   onChange: (value: number) => void;
   unit: string;
 }) => {
-  const [input, setInput] = useState<string>("");
+  const [input, setInput] = useState<string>(String(value));
 
   // Function to handle input change
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -58,16 +60,26 @@ export const Header = ({
 );
 
 export const ListItem = ({
+  value,
   onRemove,
   onChange,
 }: {
+  value: RateInput;
   onRemove: () => void;
   onChange: (input: Input, value: number) => void;
 }) => (
   <div className="flex pb-5 px-1 justify-between">
     <div className="space-x-2">
-      <NumberInput onChange={(value) => onChange("amount", value)} unit="kr" />
-      <NumberInput onChange={(value) => onChange("rate", value)} unit="%" />
+      <NumberInput
+        value={value.amount}
+        onChange={(value) => onChange("amount", value)}
+        unit="kr"
+      />
+      <NumberInput
+        value={value.rate}
+        onChange={(value) => onChange("rate", value)}
+        unit="%"
+      />
     </div>
     <button
       onClick={onRemove}

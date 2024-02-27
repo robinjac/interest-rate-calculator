@@ -1,76 +1,32 @@
-import { useState, useMemo } from "react";
-import { Header, ListItem, type RateInput, type Input } from "./Components";
+import { useState, useEffect } from "react";
+import { Header, ListItem } from "./Components";
+import { type State, init, calculateAverage } from "./utils";
 
-type UUID = `${string}-${string}-${string}-${string}-${string}`;
-
-type FieldItem = { rateInput: RateInput; id: UUID };
-type State = {
-  income: {
-    fields: FieldItem[];
-    average?: number;
-  };
-  expense: {
-    fields: FieldItem[];
-    average?: number;
-  };
-};
-type Category = keyof State;
-
-const calculateAverage = (input: FieldItem[]) => {
-  const sum = input
-    .map(({ rateInput }) => rateInput.amount)
-    .reduce((sum_, val) => sum_ + val);
-
-  const weightedSum = input
-    .map(({ rateInput }) =>
-      rateInput.amount > 0 ? (rateInput.rate * rateInput.amount) / sum : 0
-    )
-    .reduce((avgRate, rate) => avgRate + rate, 0);
-
-  // Round to one decimal place
-  return Number(weightedSum.toFixed(1));
+const initalState = {
+  income: { fields: [] },
+  expense: { fields: [] },
 };
 
-const initPatchFields =
-  (state: State) =>
-  (to: Category, updater: (fields: FieldItem[]) => FieldItem[]) => ({
-    ...state,
-    [to]: {
-      ...state[to],
-      fields: updater(state[to].fields),
-    },
-  });
+const storageKey = "rate-gap-state";
+
+const getStoredState = () => {
+  const state = localStorage.getItem(storageKey);
+
+  if (!state) return initalState;
+
+  return JSON.parse(state);
+};
 
 function App() {
-  const [state, setState] = useState<State>({
-    income: { fields: [] },
-    expense: { fields: [] },
-  });
+  const app = useState<State>(getStoredState());
 
-  const patchFields = useMemo(() => initPatchFields(state), [state]);
+  const [state] = app;
 
-  const add = (to: Category) => {
-    const item: FieldItem = {
-      rateInput: { amount: 0, rate: 0 },
-      id: crypto.randomUUID(),
-    };
+  const [add, remove, update] = init(app);
 
-    setState(patchFields(to, (fields) => [...fields, item]));
-  };
-
-  const remove = (from: Category, id: UUID) =>
-    setState(
-      patchFields(from, (fields) => fields.filter((item) => item.id !== id))
-    );
-
-  const update = (to: Category, id: UUID, input: Input, value: number) =>
-    setState(
-      patchFields(to, (fields) =>
-        fields.map((item) =>
-          item.id === id ? ((item.rateInput[input] = value), item) : item
-        )
-      )
-    );
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }, [state]);
 
   return (
     <div className="max-w-2xl p-4 space-y-10">
@@ -81,8 +37,9 @@ function App() {
           action={{ label: "Add +", onClick: () => add("expense") }}
         />
         <div className="pt-10">
-          {state.expense.fields.map(({ id }) => (
+          {state.expense.fields.map(({ id, rateInput }) => (
             <ListItem
+              value={rateInput}
               key={id}
               onRemove={() => remove("expense", id)}
               onChange={(input, value) => update("expense", id, input, value)}
