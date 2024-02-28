@@ -59,10 +59,10 @@ function App() {
           <Header text="Summary" />
           <div>
             <div>Interest: {rate}%</div>
-            <div>Total credit: {Math.round(credit)}kr</div>
-            <div>Cost per month: {Math.round(cost)}kr</div>
-            <div>Amortization per month: {Math.round(amortization)}kr</div>
-            <div>Monthly installment: {Math.round(amortization + cost)}kr</div>
+            <div>Total credit: {Math.round(credit)} kr</div>
+            <div>Cost per month: {Math.round(cost)} kr</div>
+            <div>Amortization per month: {Math.round(amortization)} kr</div>
+            <div>Total installment: {Math.round(amortization + cost)} kr</div>
           </div>
         </>
       )}
