@@ -42,7 +42,7 @@ function App() {
     <div className="max-w-2xl p-4 space-y-10">
       <h1 className="text-2xl">Rate Gap Calculator</h1>
       <div>
-        <Header text={`Loans`} action={{ label: "Add +", onClick: add }} />
+        <Header text="Credits" action={{ label: "Add +", onClick: add }} />
         <div className="pt-10">
           {state.fields.map(({ id, credit }) => (
             <ListItem
@@ -59,10 +59,10 @@ function App() {
           <Header text="Summary" />
           <div>
             <div>Interest: {rate}%</div>
-            <div>Credit: {Math.round(credit)}kr</div>
-            <div>Cost: {Math.round(cost)}kr</div>
-            <div>Amortization: {Math.round(amortization)}kr</div>
-            <div>Installment: {Math.round(amortization + cost)}kr</div>
+            <div>Total credit: {Math.round(credit)}kr</div>
+            <div>Cost per month: {Math.round(cost)}kr</div>
+            <div>Amortization per month: {Math.round(amortization)}kr</div>
+            <div>Monthly installment: {Math.round(amortization + cost)}kr</div>
           </div>
         </>
       )}
