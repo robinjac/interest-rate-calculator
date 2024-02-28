@@ -20,10 +20,13 @@ type Add = (to: Category) => void;
 type Remove = (from: Category, id: UUID) => void;
 type Update = (to: Category, id: UUID, input: Input, value: number) => void;
 
-export const calculateAverage = (input: FieldItem[]) => {
-  const sum = input
+export const calculateSum = (input: FieldItem[]) =>
+  input
     .map(({ rateInput }) => rateInput.amount)
     .reduce((sum_, val) => sum_ + val, 0);
+
+export const calculateAverage = (input: FieldItem[]) => {
+  const sum = calculateSum(input);
 
   const weightedSum = input
     .map(({ rateInput }) =>

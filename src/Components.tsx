@@ -46,16 +46,18 @@ export const Header = ({
   action,
 }: {
   text: string;
-  action: { label: string; onClick: () => void };
+  action?: { label: string; onClick: () => void };
 }) => (
   <div className="flex border-b py-2 px-1 border-slate-600 justify-between">
     <h2 className="text-xl">{text}</h2>
-    <button
-      onClick={action.onClick}
-      className="bg-slate-600 text-white px-2 py-1 text-sm border rounded"
-    >
-      {action.label}
-    </button>
+    {action && (
+      <button
+        onClick={action.onClick}
+        className="bg-slate-600 text-white px-2 py-1 text-sm border rounded"
+      >
+        {action.label}
+      </button>
+    )}
   </div>
 );
 
