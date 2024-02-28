@@ -35,7 +35,7 @@ export const NumberInput = ({
         value={input}
         onChange={handleChange}
       />
-      <span className="px-2 bg-slate-600 text-white">{unit}</span>
+      <span className="inline-flex items-center px-2 h-full bg-slate-600 text-xs text-white">{unit}</span>
     </div>
   );
 };
@@ -110,7 +110,7 @@ export const ListItem = ({
     </div>
     <button
       onClick={onRemove}
-      className="order-last bg-red-400 text-white w-6 h-5 text-lg rounded inline-flex items-center justify-center leading-none"
+      className="order-last bg-red-400 text-white w-5 h-5 p-1 text-sm rounded inline-flex items-center justify-center"
     >
       {"-"}
     </button>

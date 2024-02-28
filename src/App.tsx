@@ -41,14 +41,16 @@ function App() {
   return (
     <div className="max-w-2xl p-4 space-y-10">
       <h1 className="text-2xl">Rate Gap Calculator</h1>
-      <div className="space-y-5">
-        <Header text="Credits" action={{ label: "Add Credit", onClick: () => {} }} />
-        <div className="space-y-3 p-1 border border-slate-300 rounded">
+      <div className="space-y-10">
+        <Header text="Credits" action={{ label: "Add", onClick: () => {} }} />
+        
+        <div className="relative p-1 pt-2 border border-slate-300 rounded rounded-tl-none">
+          <button className="absolute bg-red-500 text-white text-xs -left-[1px] -top-[calc(1.5rem+1px)] px-3 h-6 rounded rounded-b-none inline-flex items-center justify-center">Remove</button>
           <SubHeader
             text="Group 1"
             action={{ label: "+", onClick: add }}
           />
-          <div>
+          <div className="py-2">
             {state.fields.map(({ id, credit }) => (
               <ListItem
                 value={credit}
