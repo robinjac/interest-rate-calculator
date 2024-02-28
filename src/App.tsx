@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { Header, ListItem } from "./Components";
-import { type State, init, calculateAverage, calculateSum } from "./utils";
+import {
+  type State,
+  init,
+  calculateAverage,
+  calculateCreditSum,
+  calculateAmortization,
+} from "./utils";
 
 const initalState: State = {
   fields: [],
@@ -28,10 +34,9 @@ function App() {
   }, [state]);
 
   const rate = calculateAverage(state.fields);
-  const credit = calculateSum(state.fields);
-  const cost = Math.round((credit * rate * 0.01) / 12);
-  const amortization =
-    (2099480 * 0.02 + 480834.42 * 0.05 + 313983.07 * 0.05) / 12;
+  const credit = calculateCreditSum(state.fields);
+  const cost = (credit * rate * 0.01) / 12;
+  const amortization = calculateAmortization(state.fields);
 
   return (
     <div className="max-w-2xl p-4 space-y-10">
@@ -55,9 +60,9 @@ function App() {
           <div>
             <div>Interest: {rate}%</div>
             <div>Credit: {Math.round(credit)}kr</div>
-            <div>Cost per month: {cost}kr</div>
+            <div>Cost: {Math.round(cost)}kr</div>
             <div>Amortization: {Math.round(amortization)}kr</div>
-            <div>Total: {Math.round(amortization + cost)}kr</div>
+            <div>Installment: {Math.round(amortization + cost)}kr</div>
           </div>
         </>
       )}

@@ -13,20 +13,30 @@ type Add = () => void;
 type Remove = (id: UUID) => void;
 type Update = (id: UUID, creditKey: keyof Credit, value: number) => void;
 
-export const calculateSum = (input: FieldItem[]) =>
-  input.map(({ credit }) => credit.amount).reduce((sum_, val) => sum_ + val, 0);
+const sum = (a: number, b: number) => a + b;
+
+export const calculateCreditSum = (input: FieldItem[]) =>
+  input.map(({ credit }) => credit.amount).reduce(sum, 0);
 
 export const calculateAverage = (input: FieldItem[]) => {
-  const sum = calculateSum(input);
+  const creditSum = calculateCreditSum(input);
 
   const weightedSum = input
     .map(({ credit }) =>
-      credit.amount > 0 ? (credit.rate * credit.amount) / sum : 0
+      credit.amount > 0 ? (credit.rate * credit.amount) / creditSum : 0
     )
-    .reduce((avgRate, rate) => avgRate + rate, 0);
+    .reduce(sum, 0);
 
   // Round to one decimal place
   return Number(weightedSum.toFixed(1));
+};
+
+export const calculateAmortization = (input: FieldItem[]) => {
+  return (
+    input
+      .map(({ credit }) => credit.amortization * 0.01 * credit.amount)
+      .reduce(sum, 0) / 12
+  );
 };
 
 export const init = ([state, setState]: [
@@ -40,7 +50,7 @@ export const init = ([state, setState]: [
 
   const add = () => {
     const item: FieldItem = {
-      credit: { amount: 0, rate: 0 },
+      credit: { amount: 0, rate: 0, amortization: 0 },
       id: crypto.randomUUID(),
     };
 
