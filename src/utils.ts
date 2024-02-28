@@ -5,12 +5,13 @@ type UUID = `${string}-${string}-${string}-${string}-${string}`;
 type FieldItem = { credit: Credit; id: UUID };
 
 export type State = {
-  fields: FieldItem[];
-  average?: number;
+  [group: string]: FieldItem[]
 };
 
-type Add = () => void;
-type Remove = (id: UUID) => void;
+type AddCredit = () => void;
+type AddGroup = () => void
+type RemoveCredit = (id: UUID) => void;
+type RemoveGroup = (name: string) => void;
 type Update = (id: UUID, creditKey: keyof Credit, value: number) => void;
 
 const sum = (a: number, b: number) => a + b;
@@ -42,7 +43,7 @@ export const calculateAmortization = (input: FieldItem[]) => {
 export const init = ([state, setState]: [
   State,
   Dispatch<SetStateAction<State>>
-]): [Add, Remove, Update] => {
+]): [AddCredit, AddGroup, RemoveCredit, RemoveGroup, Update] => {
   const patchFields = (updater: (fields: FieldItem[]) => FieldItem[]) => ({
     ...state,
     fields: updater(state.fields),
