@@ -1,7 +1,6 @@
 import { type ChangeEventHandler, useState } from "react";
 
-export type RateInput = { amount: number; rate: number };
-export type Input = keyof RateInput;
+export type Credit = { amount: number; rate: number; amortization: number };
 
 export const NumberInput = ({
   value,
@@ -29,9 +28,9 @@ export const NumberInput = ({
   };
 
   return (
-    <div className="inline-flex border-solid border border-slate-600 rounded">
+    <div className="inline-flex w-fit border-solid border border-slate-600 rounded">
       <input
-        className="flex border-none rounded outline-none pl-1"
+        className="w-full border-none rounded outline-none pl-1"
         type="text"
         value={input}
         onChange={handleChange}
@@ -66,12 +65,12 @@ export const ListItem = ({
   onRemove,
   onChange,
 }: {
-  value: RateInput;
+  value: Credit;
   onRemove: () => void;
-  onChange: (input: Input, value: number) => void;
+  onChange: (creditKey: keyof Credit, value: number) => void;
 }) => (
-  <div className="flex pb-5 px-1 justify-between">
-    <div className="space-x-2">
+  <div className="flex pb-5 px-1 justify-between items-center">
+    <div className="grid grid-cols-3 gap-2 pr-6">
       <NumberInput
         value={value.amount}
         onChange={(value) => onChange("amount", value)}
@@ -82,10 +81,15 @@ export const ListItem = ({
         onChange={(value) => onChange("rate", value)}
         unit="%"
       />
+      <NumberInput
+        value={value.amortization}
+        onChange={(value) => onChange("amortization", value)}
+        unit="%"
+      />
     </div>
     <button
       onClick={onRemove}
-      className="order-last bg-red-400 text-white px-3 text-lg rounded"
+      className="order-last bg-red-400 text-white w-6 h-5 text-lg rounded inline-flex items-center justify-center"
     >
       {"-"}
     </button>

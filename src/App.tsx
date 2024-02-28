@@ -39,12 +39,12 @@ function App() {
       <div>
         <Header text={`Loans`} action={{ label: "Add +", onClick: add }} />
         <div className="pt-10">
-          {state.fields.map(({ id, rateInput }) => (
+          {state.fields.map(({ id, credit }) => (
             <ListItem
-              value={rateInput}
+              value={credit}
               key={id}
               onRemove={() => remove(id)}
-              onChange={(input, value) => update(id, input, value)}
+              onChange={(creditKey, value) => update(id, creditKey, value)}
             />
           ))}
         </div>

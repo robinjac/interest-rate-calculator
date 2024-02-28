@@ -1,8 +1,8 @@
-import type { RateInput, Input } from "./Components";
+import type { Credit } from "./Components";
 import type { Dispatch, SetStateAction } from "react";
 
 type UUID = `${string}-${string}-${string}-${string}-${string}`;
-type FieldItem = { rateInput: RateInput; id: UUID };
+type FieldItem = { credit: Credit; id: UUID };
 
 export type State = {
   fields: FieldItem[];
@@ -11,19 +11,17 @@ export type State = {
 
 type Add = () => void;
 type Remove = (id: UUID) => void;
-type Update = (id: UUID, input: Input, value: number) => void;
+type Update = (id: UUID, creditKey: keyof Credit, value: number) => void;
 
 export const calculateSum = (input: FieldItem[]) =>
-  input
-    .map(({ rateInput }) => rateInput.amount)
-    .reduce((sum_, val) => sum_ + val, 0);
+  input.map(({ credit }) => credit.amount).reduce((sum_, val) => sum_ + val, 0);
 
 export const calculateAverage = (input: FieldItem[]) => {
   const sum = calculateSum(input);
 
   const weightedSum = input
-    .map(({ rateInput }) =>
-      rateInput.amount > 0 ? (rateInput.rate * rateInput.amount) / sum : 0
+    .map(({ credit }) =>
+      credit.amount > 0 ? (credit.rate * credit.amount) / sum : 0
     )
     .reduce((avgRate, rate) => avgRate + rate, 0);
 
@@ -42,7 +40,7 @@ export const init = ([state, setState]: [
 
   const add = () => {
     const item: FieldItem = {
-      rateInput: { amount: 0, rate: 0 },
+      credit: { amount: 0, rate: 0 },
       id: crypto.randomUUID(),
     };
 
@@ -52,11 +50,11 @@ export const init = ([state, setState]: [
   const remove = (id: UUID) =>
     setState(patchFields((fields) => fields.filter((item) => item.id !== id)));
 
-  const update = (id: UUID, input: Input, value: number) =>
+  const update = (id: UUID, creditKey: keyof Credit, value: number) =>
     setState(
       patchFields((fields) =>
         fields.map((item) =>
-          item.id === id ? ((item.rateInput[input] = value), item) : item
+          item.id === id ? ((item.credit[creditKey] = value), item) : item
         )
       )
     );
