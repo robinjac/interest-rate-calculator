@@ -47,7 +47,7 @@ export const Header = ({
   text: string;
   action?: { label: string; onClick: () => void };
 }) => (
-  <div className="flex border-b py-2 px-1 border-slate-600 justify-between">
+  <div className="flex border-b py-2 px-1 border-slate-600 justify-between items-center">
     <h2 className="text-xl">{text}</h2>
     {action && (
       <button
@@ -59,6 +59,27 @@ export const Header = ({
     )}
   </div>
 );
+
+export const SubHeader = ({
+    text,
+    action,
+  }: {
+    text: string;
+    action?: { label: string; onClick: () => void };
+  }) => (
+    <div className="flex px-1 justify-between items-center">
+      <h3 className="text-lg italic">{text}</h3>
+      {action && (
+        <button
+          onClick={action.onClick}
+          className="hover:bg-slate-500 text-slate-600 hover:text-white h-5 w-5 p-1 text-xl rounded inline-flex items-center justify-center"
+        >
+          {action.label}
+        </button>
+      )}
+    </div>
+  );
+  
 
 export const ListItem = ({
   value,
@@ -89,7 +110,7 @@ export const ListItem = ({
     </div>
     <button
       onClick={onRemove}
-      className="order-last bg-red-400 text-white w-6 h-5 text-lg rounded inline-flex items-center justify-center"
+      className="order-last bg-red-400 text-white w-6 h-5 text-lg rounded inline-flex items-center justify-center leading-none"
     >
       {"-"}
     </button>

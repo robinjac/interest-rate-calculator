@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Header, ListItem } from "./Components";
+import { Header, SubHeader, ListItem } from "./Components";
 import {
   type State,
   init,
@@ -41,17 +41,23 @@ function App() {
   return (
     <div className="max-w-2xl p-4 space-y-10">
       <h1 className="text-2xl">Rate Gap Calculator</h1>
-      <div>
-        <Header text="Credits" action={{ label: "Add +", onClick: add }} />
-        <div className="pt-10">
-          {state.fields.map(({ id, credit }) => (
-            <ListItem
-              value={credit}
-              key={id}
-              onRemove={() => remove(id)}
-              onChange={(creditKey, value) => update(id, creditKey, value)}
-            />
-          ))}
+      <div className="space-y-5">
+        <Header text="Credits" action={{ label: "Add Credit", onClick: () => {} }} />
+        <div className="space-y-3 p-1 border border-slate-300 rounded">
+          <SubHeader
+            text="Group 1"
+            action={{ label: "+", onClick: add }}
+          />
+          <div>
+            {state.fields.map(({ id, credit }) => (
+              <ListItem
+                value={credit}
+                key={id}
+                onRemove={() => remove(id)}
+                onChange={(creditKey, value) => update(id, creditKey, value)}
+              />
+            ))}
+          </div>
         </div>
       </div>
       {state.fields.length > 0 && (
