@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Header, SubHeader, ListItem } from "./Components";
 import {
   type State,
@@ -23,49 +23,64 @@ function App() {
 
   const [state] = app;
 
-  const [add, remove, update] = init(app);
+  const entries = useMemo(() => Object.entries(state), [state]);
+
+  const [addCredit, addGroup, removeCredit, removeGroup, update] = useMemo(
+    () => init(app),
+    [state]
+  );
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(state));
   }, [state]);
 
-  const entries = Object.entries(state);
-
   return (
     <div className="max-w-2xl p-4 space-y-10">
       <h1 className="text-2xl">Rate Gap Calculator</h1>
       <div className="space-y-10">
-        <Header text="Credits" action={{ label: "Add", onClick: () => {} }} />
-
-        <div className="relative p-1 pt-2 border border-slate-300 rounded rounded-tl-none">
-          <button className="absolute bg-red-500 text-white text-xs -left-[1px] -top-[calc(1.5rem+1px)] px-3 h-6 rounded rounded-b-none inline-flex items-center justify-center">
-            Remove
-          </button>
-          <SubHeader text="Group 1" action={{ label: "+", onClick: add }} />
-          <div className="py-2">
-            {state.fields.map(({ id, credit }) => (
-              <ListItem
-                value={credit}
-                key={id}
-                onRemove={() => remove(id)}
-                onChange={(creditKey, value) => update(id, creditKey, value)}
-              />
-            ))}
+        <Header text="Credits" action={{ label: "Add", onClick: addGroup }} />
+        {entries.map(([groupName, fields]) => (
+          <div
+            key={groupName}
+            className="relative p-1 pt-2 border border-slate-300 rounded rounded-tl-none"
+          >
+            <button
+              onClick={() => removeGroup(groupName)}
+              className="absolute bg-red-500 text-white text-xs -left-[1px] -top-[calc(1.5rem+1px)] px-3 h-6 rounded rounded-b-none inline-flex items-center justify-center"
+            >
+              Remove
+            </button>
+            <SubHeader
+              text={groupName}
+              action={{ label: "+", onClick: () => addCredit(groupName) }}
+            />
+            <div className="py-2">
+              {fields.map(({ id, credit }) => (
+                <ListItem
+                  value={credit}
+                  key={id}
+                  onRemove={() => removeCredit(groupName, id)}
+                  onChange={(creditKey, value) =>
+                    update(groupName, id, creditKey, value)
+                  }
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
       {entries.length > 0 && (
         <>
           <Header text="Summary" />
-          {entries.map(([name, fields]) => {
+          {entries.map(([groupName, fields]) => {
             const rate = calculateAverage(fields);
             const credit = calculateCreditSum(fields);
             const cost = (credit * rate * 0.01) / 12;
             const amortization = calculateAmortization(fields);
 
             return (
-              <div>
-                <div className="text-md">{name}</div>
+              <div key={groupName}>
+                <div className="text-lg pb-2 italic">{groupName}</div>
                 <div>Interest: {rate}%</div>
                 <div>Total credit: {Math.round(credit)} kr</div>
                 <div>Cost per month: {Math.round(cost)} kr</div>

@@ -5,14 +5,19 @@ type UUID = `${string}-${string}-${string}-${string}-${string}`;
 type FieldItem = { credit: Credit; id: UUID };
 
 export type State = {
-  [group: string]: FieldItem[]
+  [group: string]: FieldItem[];
 };
 
-type AddCredit = () => void;
-type AddGroup = () => void
-type RemoveCredit = (id: UUID) => void;
-type RemoveGroup = (name: string) => void;
-type Update = (id: UUID, creditKey: keyof Credit, value: number) => void;
+type AddCredit = (group: string) => void;
+type AddGroup = () => void;
+type RemoveCredit = (group: string, id: UUID) => void;
+type RemoveGroup = (group: string) => void;
+type Update = (
+  group: string,
+  id: UUID,
+  creditKey: keyof Credit,
+  value: number
+) => void;
 
 const sum = (a: number, b: number) => a + b;
 
@@ -44,31 +49,48 @@ export const init = ([state, setState]: [
   State,
   Dispatch<SetStateAction<State>>
 ]): [AddCredit, AddGroup, RemoveCredit, RemoveGroup, Update] => {
-  const patchFields = (updater: (fields: FieldItem[]) => FieldItem[]) => ({
+  const patch = (
+    group: string,
+    updater: (fields: FieldItem[]) => FieldItem[]
+  ) => ({
     ...state,
-    fields: updater(state.fields),
+    [group]: updater(state[group]),
   });
 
-  const add = () => {
+  const addCredit = (group: string) => {
     const item: FieldItem = {
       credit: { amount: 0, rate: 0, amortization: 0 },
       id: crypto.randomUUID(),
     };
 
-    setState(patchFields((fields) => [...fields, item]));
+    setState(patch(group, (fields) => [...fields, item]));
   };
 
-  const remove = (id: UUID) =>
-    setState(patchFields((fields) => fields.filter((item) => item.id !== id)));
+  const addGroup = () => {
+    setState(patch(crypto.randomUUID(), () => []));
+  };
 
-  const update = (id: UUID, creditKey: keyof Credit, value: number) =>
+  const removeCredit = (group: string, id: UUID) =>
+    setState(patch(group, (fields) => fields.filter((item) => item.id !== id)));
+
+  const removeGroup = (name: string) => {
+    delete state[name];
+    setState({ ...state });
+  };
+
+  const update = (
+    group: string,
+    id: UUID,
+    creditKey: keyof Credit,
+    value: number
+  ) =>
     setState(
-      patchFields((fields) =>
+      patch(group, (fields) =>
         fields.map((item) =>
           item.id === id ? ((item.credit[creditKey] = value), item) : item
         )
       )
     );
 
-  return [add, remove, update];
+  return [addCredit, addGroup, removeCredit, removeGroup, update];
 };
