@@ -24,9 +24,7 @@ const sum = (a: number, b: number) => a + b;
 export const calculateCreditSum = (input: FieldItem[]) =>
   input.map(({ credit }) => credit.amount).reduce(sum, 0);
 
-export const calculateAverage = (input: FieldItem[]) => {
-  const creditSum = calculateCreditSum(input);
-
+export const calculateAverage = (creditSum: number, input: FieldItem[]) => {
   const weightedSum = input
     .map(({ credit }) =>
       credit.amount > 0 ? (credit.rate * credit.amount) / creditSum : 0
@@ -67,7 +65,18 @@ export const init = ([state, setState]: [
   };
 
   const addGroup = () => {
-    setState(patch(crypto.randomUUID(), () => []));
+    const keys = Object.keys(state);
+
+    if (keys.length === 0) {
+      setState({ Group1: [] });
+    } else {
+      const numbers = keys.map((name) => Number(name.split("Group")[1]));
+
+      setState({
+        ...state,
+        [`Group${Math.max(...numbers) + 1}`]: [],
+      });
+    }
   };
 
   const removeCredit = (group: string, id: UUID) =>
