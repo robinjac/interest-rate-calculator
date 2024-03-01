@@ -21,6 +21,11 @@ type Update = (
 
 const sum = (a: number, b: number) => a + b;
 
+const createFieldItem = (): FieldItem => ({
+  credit: { amount: 0, rate: 0, amortization: 0 },
+  id: crypto.randomUUID(),
+});
+
 export const calculateCreditSum = (input: FieldItem[]) =>
   input.map(({ credit }) => credit.amount).reduce(sum, 0);
 
@@ -56,27 +61,20 @@ export const init = ([state, setState]: [
   });
 
   const addCredit = (group: string) => {
-    const item: FieldItem = {
-      credit: { amount: 0, rate: 0, amortization: 0 },
-      id: crypto.randomUUID(),
-    };
-
-    setState(patch(group, (fields) => [...fields, item]));
+    setState(patch(group, (fields) => [...fields, createFieldItem()]));
   };
 
   const addGroup = () => {
-    const keys = Object.keys(state);
+    const numbers = Object.keys(state).map((name) =>
+      Number(name.split(" ")[1])
+    );
 
-    if (keys.length === 0) {
-      setState({ Group1: [] });
-    } else {
-      const numbers = keys.map((name) => Number(name.split("Group")[1]));
-
-      setState({
-        ...state,
-        [`Group${Math.max(...numbers) + 1}`]: [],
-      });
-    }
+    setState({
+      ...state,
+      [`Credit ${numbers.length > 0 ? Math.max(...numbers) + 1 : 1}`]: [
+        createFieldItem(),
+      ],
+    });
   };
 
   const removeCredit = (group: string, id: UUID) =>

@@ -35,7 +35,9 @@ export const NumberInput = ({
         value={input}
         onChange={handleChange}
       />
-      <span className="inline-flex items-center px-2 h-full bg-slate-600 text-xs text-white">{unit}</span>
+      <span className="inline-flex items-center px-2 h-full bg-slate-600 text-xs text-white">
+        {unit}
+      </span>
     </div>
   );
 };
@@ -61,25 +63,24 @@ export const Header = ({
 );
 
 export const SubHeader = ({
-    text,
-    action,
-  }: {
-    text: string;
-    action?: { label: string; onClick: () => void };
-  }) => (
-    <div className="flex px-1 justify-between items-center">
-      <h3 className="text-lg italic">{text}</h3>
-      {action && (
-        <button
-          onClick={action.onClick}
-          className="hover:bg-slate-500 text-slate-600 hover:text-white w-5 text-sm rounded inline-flex items-center justify-center"
-        >
-          <span className="h-full">{action.label}</span>
-        </button>
-      )}
-    </div>
-  );
-  
+  text,
+  action,
+}: {
+  text: string;
+  action?: { label: string; onClick: () => void };
+}) => (
+  <div className="flex px-1 justify-between items-center">
+    <h3 className="text-lg italic">{text}</h3>
+    {action && (
+      <button
+        onClick={action.onClick}
+        className="hover:bg-slate-500 text-slate-600 hover:text-white w-5 text-sm rounded inline-flex items-center justify-center"
+      >
+        <span className="h-full">{action.label}</span>
+      </button>
+    )}
+  </div>
+);
 
 export const ListItem = ({
   value,
@@ -87,7 +88,7 @@ export const ListItem = ({
   onChange,
 }: {
   value: Credit;
-  onRemove: () => void;
+  onRemove?: () => void;
   onChange: (creditKey: keyof Credit, value: number) => void;
 }) => (
   <div className="flex pb-5 px-1 justify-between items-center">
@@ -110,7 +111,9 @@ export const ListItem = ({
     </div>
     <button
       onClick={onRemove}
-      className="order-last bg-red-400 text-white w-5 h-5 p-1 text-sm rounded inline-flex items-center justify-center"
+      className={`order-last ${
+        !!onRemove ? "bg-red-400 text-white" : "invisible"
+      } w-5 h-5 p-1 text-sm rounded inline-flex items-center justify-center`}
     >
       {"-"}
     </button>
