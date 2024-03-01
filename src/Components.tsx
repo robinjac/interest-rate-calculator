@@ -72,9 +72,9 @@ export const SubHeader = ({
       {action && (
         <button
           onClick={action.onClick}
-          className="hover:bg-slate-500 text-slate-600 hover:text-white h-5 w-5 p-1 text-xl rounded inline-flex items-center justify-center"
+          className="hover:bg-slate-500 text-slate-600 hover:text-white w-5 text-sm rounded inline-flex items-center justify-center"
         >
-          {action.label}
+          <span className="h-full">{action.label}</span>
         </button>
       )}
     </div>
