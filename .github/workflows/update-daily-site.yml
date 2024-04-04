@@ -56,7 +56,7 @@ jobs:
             git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
             rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
             mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-            cp -a ${{ env.GITHUB_REF_SLUG }}/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+            cp -a ${{ env.GITHUB_REF_SLUG }}/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/ 
             node .scripts/update_daily.cjs "[GHA] interest-rate-calculator interest-rate-calculator ${{ env.branch_action }} ${{ github.ref }}"
             cd tmp
             git add .
