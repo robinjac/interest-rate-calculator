@@ -21,7 +21,7 @@ jobs:
             git config --global user.name ${{ github.actor }}
             git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
             rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-            node .scripts/update_daily "[GHA] interest-rate-calculator interest-rate-calculator DELETED ${{ github.ref }}"
+            node .scripts/update_daily.cjs "[GHA] interest-rate-calculator interest-rate-calculator DELETED ${{ github.ref }}"
             cd tmp
             git add .
             git commit --allow-empty --message "[GHA] DELETED ${{ github.ref }}"
@@ -57,7 +57,7 @@ jobs:
             rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
             mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
             cp -a ${{ env.GITHUB_REF_SLUG }}/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-            node .scripts/update_daily "[GHA] interest-rate-calculator interest-rate-calculator ${{ env.branch_action }} ${{ github.ref }}"
+            node .scripts/update_daily.cjs "[GHA] interest-rate-calculator interest-rate-calculator ${{ env.branch_action }} ${{ github.ref }}"
             cd tmp
             git add .
             git commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
