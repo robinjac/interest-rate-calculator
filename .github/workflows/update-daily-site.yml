@@ -20,8 +20,8 @@ jobs:
             git config --global user.email ${{ github.actor }}
             git config --global user.name ${{ github.actor }}
             git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
-            rm -rf tmp/awesome-apps/${{ env.GITHUB_REF_SLUG }}/
-            node .scripts/update_daily "[GHA] awesome-apps elm-svelte-app DELETED ${{ github.ref }}"
+            rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+            node .scripts/update_daily "[GHA] interest-rate-calculator interest-rate-calculator DELETED ${{ github.ref }}"
             cd tmp
             git add .
             git commit --allow-empty --message "[GHA] DELETED ${{ github.ref }}"
@@ -43,20 +43,20 @@ jobs:
           uses: rlespinasse/github-slug-action@v3.x
           ## Install and build your stuff within here
         - name: Install and Build 🔧
-          run: | # Install npm packages and build the Storybook files.
-            echo build
-          ##
-        - name: Rename 'storybook-static' to Current Branch Name
-          run: mv packages/elm-svelte-app/storybook-static packages/elm-svelte-app/${{ env.GITHUB_REF_SLUG }}
+          run: | # Install npm packages and build the files.
+            npm install
+            npm build
+        - name: Rename 'dist' to Current Branch Name
+          run: mv dist ${{ env.GITHUB_REF_SLUG }}
         - name: Push to Daily Site 🚀
           run: |
             mkdir tmp
             git config --global user.email ${{ github.actor }}
             git config --global user.name ${{ github.actor }}
             git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
-            rm -rf tmp/awesome-apps/${{ env.GITHUB_REF_SLUG }}/
-            cp -a packages/elm-svelte-app/${{ env.GITHUB_REF_SLUG }}/. tmp/awesome-apps/${{ env.GITHUB_REF_SLUG }}/
-            node .scripts/update_daily "[GHA] awesome-apps elm-svelte-app ${{ env.branch_action }} ${{ github.ref }}"
+            rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+            cp -a ${{ env.GITHUB_REF_SLUG }}/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+            node .scripts/update_daily "[GHA] interest-rate-calculator interest-rate-calculator ${{ env.branch_action }} ${{ github.ref }}"
             cd tmp
             git add .
             git commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
