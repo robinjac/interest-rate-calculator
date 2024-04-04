@@ -45,7 +45,7 @@ jobs:
         - name: Install and Build 🔧
           run: | # Install npm packages and build the files.
             npm install
-            npm build
+            npm run build
         - name: Rename 'dist' to Current Branch Name
           run: mv dist ${{ env.GITHUB_REF_SLUG }}
         - name: Push to Daily Site 🚀
