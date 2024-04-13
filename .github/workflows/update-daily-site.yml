@@ -53,7 +53,7 @@ jobs:
           mkdir -p interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
           cp -a dist/. interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
           cd interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
-          node .scripts/update_daily.cjs ${{ github.ref }}
+          node ../../.scripts/update_daily.cjs ${{ github.ref }}
           cd -
           git add .
           git commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
