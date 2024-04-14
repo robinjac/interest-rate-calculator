@@ -10,37 +10,39 @@ jobs:
     if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }} # By default the delete event triggers on many things, but we only want this to run when a branch is deleted.
     runs-on: ubuntu-latest
     steps:
-      - name: Inject GIT Slug/Short Variables # Exposes git variables in a slug format (/ turns to - etc).
-        uses: rlespinasse/github-slug-action@v3.x
-      - name: Delete Files on Daily 🚀
+      - name: Store Slugified Ref Name
+        id: slugify_ref_name
+        run: echo "::set-output name=ref_slug::$(echo ${{ github.ref_name }} | sed 's/\//-/g')"
+
+      - name: Create Temporary Folder tmp
+        run: mkdir tmp
+
+      - name: Clone Daily Sites Repository Into tmp
         run: |
-          git config --global user.email ${{ github.actor }}@users.noreply.github.com
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name ${{ github.actor }}
-          git clone --single-branch --branch master https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git
-          rm -rf interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-          git add .
-          git commit --allow-empty --message "[GHA] DELETED ${{ github.ref_name }}"
-          git push -u origin HEAD:master
+          git clone --single-branch --branch master https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git tmp
+
+      - name: Copy Built Files to Branch Folder
+        run: |
+          rm -rf tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug }}/
+
+      - name: Add and Push Changes to Daily Sites Repository
+        run: |
+          git -C tmp add .
+          git -C tmp commit --allow-empty --message "[GHA] ${{ github.run_id }} ${{ github.ref_name }}"
+          git -C tmp push -u origin HEAD:master
+
   deploy-to-daily:
     if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }} # We only want to run this on push by a user and not a bot.
     runs-on: ubuntu-latest
     steps:
-      - name: Determine Branch Action
-        run: |
-          # CREATED = branch did not exist before 
-          # UPDATED = updating existing branch
-
-          if [[ ${{ github.event.created }} == true ]]; then
-              echo "branch_action=CREATED" >> $GITHUB_ENV
-          else
-              echo "branch_action=UPDATED" >> $GITHUB_ENV
-          fi
-
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Inject GIT Slug/Short Variables
-        uses: rlespinasse/github-slug-action@v3.x
+      - name: Store Slugified Ref Name
+        id: slugify_ref_name
+        run: echo "::set-output name=ref_slug::$(echo ${{ github.ref_name }} | sed 's/\//-/g')"
 
       - name: Create Temporary Folder tmp
         run: mkdir tmp
@@ -58,13 +60,13 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-          mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
-          cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
+          rm -rf tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/
+          mkdir -p tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/branch
+          cp -a dist/. tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
