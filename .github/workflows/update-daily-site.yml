@@ -66,9 +66,7 @@ jobs:
 
       - name: Create Branch Meta Data
         run: |
-          cd tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
-          node ../../../.scripts/update_daily.cjs ${{ github.ref }}
-          cd -
+          node .scripts/create-branch-metadata.cjs ${{ github.ref }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
