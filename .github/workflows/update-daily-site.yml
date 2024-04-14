@@ -10,8 +10,6 @@ jobs:
     if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }} # By default the delete event triggers on many things, but we only want this to run when a branch is deleted.
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2.3.1
       - name: Inject GIT Slug/Short Variables # Exposes git variables in a slug format (/ turns to - etc).
         uses: rlespinasse/github-slug-action@v3.x
       - name: Delete Files on Daily 🚀
@@ -60,13 +58,13 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/
-          mkdir -p tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/branch
-          cp -a dist/. tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/branch
+          rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+          mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
+          cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
