@@ -44,11 +44,6 @@ jobs:
       - name: Inject GIT Slug/Short Variables
         uses: rlespinasse/github-slug-action@v3.x
 
-      - name: Install Dependencies and Build
-        run: |
-          npm install
-          npm run build
-
       - name: Create Temporary Directory tmp
         run: mkdir tmp
 
@@ -58,19 +53,24 @@ jobs:
           git config --global user.name ${{ github.actor }}
           git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
 
-      - name: Prepare Build Directory
+      - name: Install Dependencies and Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Copy Built Files to Branch Folder
         run: |
           rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
           mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
           cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
 
-      - name: Update Daily
+      - name: Create Branch Meta Data
         run: |
           cd tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
-          node ../../.scripts/update_daily.cjs ${{ github.ref }}
+          node ../../../.scripts/update_daily.cjs ${{ github.ref }}
           cd -
 
-      - name: Push Changes to Daily Sites Repository
+      - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp/daily-sites add .
           git -C tmp/daily-sites commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
