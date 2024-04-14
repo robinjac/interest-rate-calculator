@@ -16,12 +16,12 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
       - name: Delete Files on Daily 🚀
         run: |
-          git config --global user.email ${{ github.actor }}
+          git config --global user.email ${{ github.actor }}@users.noreply.github.com
           git config --global user.name ${{ github.actor }}
-          git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git"
+          git clone --single-branch --branch master https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git
           rm -rf interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
           git add .
-          git commit --allow-empty --message "[GHA] DELETED ${{ github.ref }}"
+          git commit --allow-empty --message "[GHA] DELETED ${{ github.ref_name }}"
           git push -u origin HEAD:master
   deploy-to-daily:
     if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }} # We only want to run this on push by a user and not a bot.
@@ -66,10 +66,10 @@ jobs:
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
+          git -C tmp commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
