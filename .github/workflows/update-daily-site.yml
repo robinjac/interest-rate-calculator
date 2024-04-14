@@ -72,6 +72,6 @@ jobs:
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
-          git -C tmp/daily-sites add .
-          git -C tmp/daily-sites commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
-          git -C tmp/daily-sites push -u origin HEAD:master
+          git -C tmp add .
+          git -C tmp commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
+          git -C tmp push -u origin HEAD:master
