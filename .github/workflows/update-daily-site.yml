@@ -39,12 +39,12 @@ jobs:
           fi
 
       - name: Checkout Repository
-        uses: actions/checkout@v2.3.1
+        uses: actions/checkout@v2
 
       - name: Inject GIT Slug/Short Variables
         uses: rlespinasse/github-slug-action@v3.x
 
-      - name: Create Temporary Directory tmp
+      - name: Create Temporary Folder tmp
         run: mkdir tmp
 
       - name: Clone Daily Sites Repository Into tmp
@@ -60,16 +60,16 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-          mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
-          cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
+          rm -rf tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/
+          mkdir -p tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/branch
+          cp -a dist/. tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ github.env.GITHUB_REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] ${{ github.run_id }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
