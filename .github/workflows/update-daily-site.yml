@@ -49,23 +49,23 @@ jobs:
           npm install
           npm run build
 
+      - name: Create tmp Directory
+        run: mkdir tmp
+
       - name: Clone Daily Sites Repository
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name ${{ github.actor }}
-          git clone --single-branch --branch master "https://github.com/robinjac/daily-sites.git"
+          git clone --single-branch --branch master "https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git" tmp
 
       - name: Prepare Build Directory
         run: |
-          rm -rf interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
-          mkdir -p interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
-          cp -a dist/. interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
+          rm -rf tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/
+          mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
+          cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
 
-      - name: Update Daily
-        run: |
-          cd interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
-          node ../../.scripts/update_daily.cjs ${{ github.ref }}
-          cd -
+      - name: Change to tmp Directory
+        run: cd tmp
 
       - name: Commit Changes
         run: |
