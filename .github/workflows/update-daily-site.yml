@@ -51,9 +51,7 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name ${{ github.actor }}
-          git clone --single-branch --branch master https://$GIT_AUTH_TOKEN@github.com/robinjac/daily-sites.git tmp
-        env:
-            GIT_AUTH_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
+          git clone --single-branch --branch master https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git tmp
 
       - name: Install Dependencies and Build
         run: |
