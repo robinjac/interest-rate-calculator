@@ -49,10 +49,10 @@ jobs:
           npm install
           npm run build
 
-      - name: Create tmp Directory
+      - name: Create Temporary Directory tmp
         run: mkdir tmp
 
-      - name: Clone Daily Sites Repository
+      - name: Clone Daily Sites Repository Into tmp
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name ${{ github.actor }}
@@ -64,13 +64,14 @@ jobs:
           mkdir -p tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
           cp -a dist/. tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}/branch
 
-      - name: Change to tmp Directory
-        run: cd tmp
-
-      - name: Commit Changes
+      - name: Update Daily
         run: |
-          git add .
-          git commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
+          cd tmp/interest-rate-calculator/${{ env.GITHUB_REF_SLUG }}
+          node ../../.scripts/update_daily.cjs ${{ github.ref }}
+          cd -
 
-      - name: Push Changes to Repository
-        run: git push -u origin HEAD:master
+      - name: Push Changes to Daily Sites Repository
+        run: |
+          git -C tmp/daily-sites add .
+          git -C tmp/daily-sites commit --allow-empty --message "[GHA] ${{ env.branch_action }} ${{ github.ref }}"
+          git -C tmp/daily-sites push -u origin HEAD:master
