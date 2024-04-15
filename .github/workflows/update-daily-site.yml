@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Store Slugified Ref Name
-        id: slugify_ref_name
-        run: echo "::set-output name=ref_slug::$(echo ${{ github.ref_name }} | sed 's/\//-/g')"
+        run: |
+          echo "REF_SLUG=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
       - name: Create Temporary Folder tmp
         run: mkdir tmp
@@ -25,7 +25,7 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug }}/
+          rm -rf tmp/interest-rate-calculator/${{ env.REF_SLUG  }}/
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
@@ -38,11 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Store Slugified Ref Name
-        id: slugify_ref_name
-        run: echo "::set-output name=ref_slug::$(echo ${{ github.ref_name }} | sed 's/\//-/g')"
+        run: |
+          echo "REF_SLUG=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
       - name: Create Temporary Folder tmp
         run: mkdir tmp
@@ -60,13 +60,13 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/
-          mkdir -p tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/branch
-          cp -a dist/. tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}/branch
+          rm -rf tmp/interest-rate-calculator/${{ env.REF_SLUG  }}/
+          mkdir -p tmp/interest-rate-calculator/${{ env.REF_SLUG }}/branch
+          cp -a dist/. tmp/interest-rate-calculator/${{ env.REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ steps.slugify_ref_name.outputs.ref_slug  }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
