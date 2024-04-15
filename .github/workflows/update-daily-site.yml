@@ -23,14 +23,14 @@ jobs:
           git config --global user.name ${{ github.actor }}
           git clone --single-branch --branch master https://${{ secrets.API_TOKEN_GITHUB }}@github.com/robinjac/daily-sites.git tmp
 
-      - name: Copy Built Files to Branch Folder
+      - name: Delete Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ env.REF_SLUG  }}/
+          rm -rf tmp/${{ github.repository }}/${{ env.REF_SLUG  }}/
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] ${{ github.run_id }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.run_id }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
@@ -60,16 +60,16 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/interest-rate-calculator/${{ env.REF_SLUG  }}/
-          mkdir -p tmp/interest-rate-calculator/${{ env.REF_SLUG }}/branch
-          cp -a dist/. tmp/interest-rate-calculator/${{ env.REF_SLUG }}/branch
+          rm -rf tmp/${{ github.repository }}/${{ env.REF_SLUG  }}/
+          mkdir -p tmp/${{ github.repository }}/${{ env.REF_SLUG }}/branch
+          cp -a dist/. tmp/${{ github.repository }}/${{ env.REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/interest-rate-calculator/${{ env.REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ github.repository }}/${{ env.REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] ${{ github.run_id }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] Push ${{ github.run_id }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
