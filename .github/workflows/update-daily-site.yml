@@ -14,6 +14,8 @@ jobs:
         run: |
           echo "REF_SLUG=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
+          echo "REPO_SLUG=$(echo ${{ github.repository }} | sed 's/\//-/g')" >> $GITHUB_ENV
+
       - name: Create Temporary Folder tmp
         run: mkdir tmp
 
@@ -25,12 +27,12 @@ jobs:
 
       - name: Delete Branch Folder
         run: |
-          rm -rf tmp/${{ github.repository_id }}/${{ env.REF_SLUG  }}/
+          rm -rf tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG  }}/
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.run_id }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
@@ -43,6 +45,8 @@ jobs:
       - name: Store Slugified Ref Name
         run: |
           echo "REF_SLUG=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_ENV
+
+          echo "REPO_SLUG=$(echo ${{ github.repository }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
       - name: Create Temporary Folder tmp
         run: mkdir tmp
@@ -60,16 +64,16 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/${{ github.repository_id }}/${{ env.REF_SLUG  }}/
-          mkdir -p tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}/branch
-          cp -a dist/. tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}/branch
+          rm -rf tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG  }}/
+          mkdir -p tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}/branch
+          cp -a dist/. tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] Push ${{ github.run_id }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] Push ${{ github.repository }} ${{ github.ref_name }}"
           git -C tmp push -u origin HEAD:master
