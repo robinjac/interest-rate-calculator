@@ -25,7 +25,7 @@ jobs:
 
       - name: Delete Branch Folder
         run: |
-          rm -rf tmp/${{ github.repository }}/${{ env.REF_SLUG  }}/
+          rm -rf tmp/${{ github.repository_id }}/${{ env.REF_SLUG  }}/
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
@@ -60,13 +60,13 @@ jobs:
 
       - name: Copy Built Files to Branch Folder
         run: |
-          rm -rf tmp/${{ github.repository }}/${{ env.REF_SLUG  }}/
-          mkdir -p tmp/${{ github.repository }}/${{ env.REF_SLUG }}/branch
-          cp -a dist/. tmp/${{ github.repository }}/${{ env.REF_SLUG }}/branch
+          rm -rf tmp/${{ github.repository_id }}/${{ env.REF_SLUG  }}/
+          mkdir -p tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}/branch
+          cp -a dist/. tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}/branch
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ github.repository }}/${{ env.REF_SLUG }}
+          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ github.repository_id }}/${{ env.REF_SLUG }}
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
