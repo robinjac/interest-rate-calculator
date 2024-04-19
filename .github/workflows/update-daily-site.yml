@@ -3,11 +3,11 @@ name: Update Daily Site
 on: [push, delete]
 
 concurrency:
-  group: ${{ github.ref }}${{ github.actor }}
+  group: ${{ github.event.ref }}${{ github.actor }}
   cancel-in-progress: true
 jobs:
   delete-from-daily:
-    if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }} # By default the delete event triggers on many things, but we only want this to run when a branch is deleted.
+    if: ${{ github.event_name == 'delete' && github.event.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Store Slugified Ref Name
@@ -36,7 +36,7 @@ jobs:
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
-    if: ${{ github.event_name == 'push' && github.event.ref_type == 'branch' && github.actor != 'dependabot[bot]' }} # We only want to run this on push by a user and not a bot.
+    if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/') && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
