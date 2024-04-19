@@ -1,4 +1,4 @@
-name: Update Daily Site
+name: Update Daily Sites
 
 on: [push, delete]
 
@@ -70,7 +70,11 @@ jobs:
 
       - name: Create Branch Meta Data
         run: |
-          node .scripts/create-branch-metadata.cjs ${{ github.ref_name }} tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}
+          cat << EOF > "tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}/branch.json" {
+            "name": "${{ env.REF_SLUG }}",
+            "date": "$(date +"%Y-%m-%d %H:%M:%S")"
+          }
+          EOF
 
       - name: Add and Push Changes to Daily Sites Repository
         run: |
