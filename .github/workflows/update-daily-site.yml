@@ -35,7 +35,7 @@ jobs:
           git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ env.REF_SLUG }}"
           git -C tmp push -u origin HEAD:master
 
-  deploy-to-daily:
+  push-to-daily:
     if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/') && !contains(github.actor, '[bot]') }}
     runs-on: ubuntu-latest
     steps:
