@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Store Slugified Ref Name
         run: |
-          echo "REF_SLUG=$(echo ${{ github.event.ref }} | sed 's@^refs/heads/@@')" >> $GITHUB_ENV
+          echo "REF_SLUG=$(echo ${{ github.event.ref }} | sed 's@^refs/heads/@@' | tr -s '/' '-')" >> $GITHUB_ENV
 
           echo "REPO_SLUG=$(echo ${{ github.repository }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
