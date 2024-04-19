@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Store Slugified Ref Name
         run: |
-          echo "REF_SLUG=$(echo ${{ github.ref_name }} | sed 's/\//-/g')" >> $GITHUB_ENV
+          echo "REF_SLUG=$(echo ${{ github.event.ref }} | sed 's@^refs/heads/@@')" >> $GITHUB_ENV
 
           echo "REPO_SLUG=$(echo ${{ github.repository }} | sed 's/\//-/g')" >> $GITHUB_ENV
 
@@ -32,7 +32,7 @@ jobs:
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ github.ref_name }}"
+          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ github.event.ref }}"
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
