@@ -70,7 +70,8 @@ jobs:
 
       - name: Create Branch Meta Data
         run: |
-          cat << EOF > "tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}/branch.json" {
+          cat << EOF > "tmp/${{ env.REPO_SLUG }}/${{ env.REF_SLUG }}/branch.json" 
+          {
             "name": "${{ env.REF_SLUG }}",
             "date": "$(date +"%Y-%m-%d %H:%M:%S")"
           }
