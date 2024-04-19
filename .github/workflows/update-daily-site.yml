@@ -32,11 +32,11 @@ jobs:
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ github.event.ref }}"
+          git -C tmp commit --allow-empty --message "[GHA] Delete ${{ github.repository }} ${{ env.REF_SLUG }}"
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
-    if: ${{ github.event_name == 'push' && github.actor != 'dependabot[bot]' }} # We only want to run this on push by a user and not a bot.
+    if: ${{ github.event_name == 'push' && github.event.ref_type == 'branch' && github.actor != 'dependabot[bot]' }} # We only want to run this on push by a user and not a bot.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -75,5 +75,5 @@ jobs:
       - name: Add and Push Changes to Daily Sites Repository
         run: |
           git -C tmp add .
-          git -C tmp commit --allow-empty --message "[GHA] Push ${{ github.repository }} ${{ github.event.ref }}"
+          git -C tmp commit --allow-empty --message "[GHA] Push ${{ github.repository }} ${{ env.REF_SLUG }}"
           git -C tmp push -u origin HEAD:master
