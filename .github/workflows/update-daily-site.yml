@@ -36,7 +36,7 @@ jobs:
           git -C tmp push -u origin HEAD:master
 
   deploy-to-daily:
-    if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/') && github.actor != 'dependabot[bot]' }}
+    if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/heads/') && !contains(github.actor, '[bot]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
